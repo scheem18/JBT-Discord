@@ -8,7 +8,7 @@ const app = require('express')()
     console.log(`Server running on ${process.env['PORT']}`)
 });
 
-const { Client, GatewayIntentBits, Partials, Collection } = require('discord.js');
+const { Client, GatewayIntentBits, Partials, Collection, ActivityType } = require('discord.js');
 const client = new Client({
     intents:[
         GatewayIntentBits.Guilds,
@@ -27,7 +27,16 @@ const client = new Client({
         Partials.Message,
         Partials.ThreadMember,
         Partials.User
-    ]
+    ],
+    presence:{
+        activities:[
+            {
+                name:'Sileo',
+                type:ActivityType.Playing,
+                url:'https://getsileo.app/'
+            }
+        ]
+    }
 });
 
 const { TOKEN } = require('./config');
@@ -35,15 +44,6 @@ const { Player } = require("discord-player");
 client.player = new Player(client);
 client.player.on("trackStart", (queue, track) => queue.metadata.channel.send(`再生開始:**[${track.title}](${track.url})**`));
 const fs = require('fs');
-client.user.setPresence({
-    activities:[
-        {
-            name:'Sileo',
-            type:'PLAYING',
-            url:'https://getsileo.app/'
-        }
-    ]
-})
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
 for (const file of eventFiles) {
 	const event = require(`./events/${file}`);
