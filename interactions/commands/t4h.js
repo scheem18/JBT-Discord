@@ -16,7 +16,7 @@ module.exports = {
         const embeds = [];
         const query = interaction.options.getString('search');
         try {
-            const article = await parser.parseURL(`https://tools4hack.santalab.me/rss/${!query ? '' : `?q=${query}`}`);
+            const article = await parser.parseURL(`https://tools4hack.santalab.me/rss/${!query ? '' : `?s=${query}`}`);
             while (article.items.length > 5) {
                 article.items.pop();
             }
@@ -30,7 +30,7 @@ module.exports = {
                 );
             });
             if (embeds.length === 1) return await interaction.editReply({embeds:[embeds[0]]});
-            reactionPagination.editReply({interaction,embeds});
+            await reactionPagination.editReply({interaction,embeds});
         } catch (err) {
             console.error(err);
             return await interaction.editReply({content:'記事を取得出来ませんでした。'});

@@ -46,13 +46,14 @@ module.exports = {
                 const { data } = await axios.get(`https://api.canister.me/v2/jailbreak/package/search?q=${query}`);
                 if (!data.data[0]) return await interaction.editReply({content:'パッケージが見つかりませんでした。'});
                 while (data.data.length > 5) {
-                    data.pop();
+                    data.data.pop();
                 }
+                console.log(data.data)
                 data.data.map(x => {
                     embeds.push(
                         new EmbedBuilder()
-                        .setTitle(`${x.name}`)
-                        .setDescription(`${x.description}` ?? null)
+                        .setTitle(`${x.name ?? 'パッケージ名無し'}`)
+                        .setDescription(`${x.description.length > 4000 ? x.description.slice(0,4000) : x.description}` ?? null)
                         .addFields(
                             {name:'パッケージID',value:x.package},
                             {name:'作成者',value:`${x.author}`,inline:true},
@@ -61,7 +62,6 @@ module.exports = {
                             {name:'価格',value:x.price,inline:true},
                             {name:'カテゴリー',value:x.section,inline:true},
                         )
-                        .setFooter({text:`${x.name}`,iconURL:x.icon})
                     );
                 });
                 if (embeds.length === 1) return await interaction.editReply({embeds:[embeds[0]]});
@@ -77,7 +77,7 @@ module.exports = {
                 const { data } = await axios.get(`https://api.canister.me/v2/jailbreak/repository/search?q=${query}`);
                 if (!data.data[0]) return await interaction.editReply({content:'リポジトリが見つかりませんでした。'});
                 while (data.data.length > 5) {
-                    data.pop();
+                    data.data.pop();
                 }
                 data.data.map(x => {
                     embeds.push(
