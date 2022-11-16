@@ -1,6 +1,7 @@
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
 const Parser = require('rss-parser');
 const parser = new Parser();
+const axios = require('axios');
 const reactionPagination = require('../../library/pagination');
 
 module.exports = {
@@ -16,7 +17,8 @@ module.exports = {
         const embeds = [];
         const query = interaction.options.getString('search');
         try {
-            const article = await parser.parseURL(`https://tools4hack.santalab.me/rss/${!query ? '' : `?q=${query}`}`);
+            const { data } = await axios.get(`https://tools4hack.santalab.me/rss/${!query ? '' : `?q=${query}`}`);
+            const article = await parser.parseURL(data);
             while (article.items.length > 5) {
                 article.items.pop();
             }
