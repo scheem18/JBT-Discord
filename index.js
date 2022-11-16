@@ -39,7 +39,10 @@ const client = new Client({
         ]
     }
 });
-
+const cron = require('node-cron');
+cron.schedule('0 0,12 * * *', () => {
+    require('./utils/sigscheck').sigscheck();
+});
 const { TOKEN } = require('./config');
 const { Player } = require("discord-player");
 client.player = new Player(client);
