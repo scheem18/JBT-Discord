@@ -29,7 +29,7 @@ const client = new Client({
     }
 });
 
-const { TOKEN } = require('./config.json');
+const { TOKEN } = require('./config');
 const { Player } = require("discord-player");
 client.player = new Player(client);
 client.player.on("trackStart", (queue, track) => queue.metadata.channel.send(`再生開始:**[${track.title}](${track.url})**`));
