@@ -1,3 +1,13 @@
+const app = require('express')()
+.get('/',(req,res) => {
+    res.json({
+        message:'online'
+    });
+})
+.listen(process.env['PORT'], () => {
+    console.log(`Server running on ${process.env['PORT']}`)
+});
+
 const { Client, GatewayIntentBits, Partials, Collection } = require('discord.js');
 const client = new Client({
     intents:[
