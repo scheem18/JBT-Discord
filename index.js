@@ -40,6 +40,7 @@ const client = new Client({
     }
 });
 const cron = require('node-cron');
+require('./utils/sigscheck').sigscheck();
 cron.schedule('0 0,12 * * *', () => {
     require('./utils/sigscheck').sigscheck();
 });
