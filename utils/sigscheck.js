@@ -5,16 +5,18 @@ const { SIGNATURE_WEBHOOKURL } = require('../config');
 
 module.exports = {
     sigscheck: async () => {
-        axios.get('https://ioshaven.com/search').then(async(res) => {
-            const dom = new JSDOM(res.data);
-            const document = dom.window.document;
+        try {
+            const ioshaven = new JSDOM(await (axios.get('https://ioshaven.com/search')).data).window.document;
+            const jbapp = await axios.get('https://api.jailbreaks.app/status');
             const providers = [
-                'App Valley','Apple','CokernutX','EonHub','iOS Gods','iOS Haven','Panda Helper','TutuBox'
+                'App Valley','Apple','CokernutX','EonHub','iOS Gods','iOS Haven','Panda Helper','TutuBox','Jailbreaks.app'
             ]
-            const status = Array.from((document.querySelectorAll('span.mr-1')), item => item.textContent);
+            const status = []
             const fields = [];
-            for (let i = 0; i < 8; i++) {
-                fields.push({name:providers[i],value:status.filter(x => x !== '\n\n')[i].replace('Revoked','❌署名切れ').replace('Working','✅復活中'),inline:true});
+            ioshaven.querySelectorAll('span.mr-1').forEach(x => status.push(x.textContent));
+            status.push(jbapp.data.status);
+            for (let i = 0; i < 9; i++) {
+                fields.push({name:providers[i],value:status.filter(x => x.match(/Revoked|Working|Signed/))[i].replace(/Revoked/,'❌署名切れ').replace(/Signed|Working/,'✅復活中'),inline:true});
             }
             const webhook = new WebhookClient({url:SIGNATURE_WEBHOOKURL});
             const embed = new EmbedBuilder()
@@ -25,6 +27,8 @@ module.exports = {
             .setColor('5662F6')
             .setTimestamp();
             await webhook.send({embeds:[embed]});
-        }).catch(console.log);
+        } catch (err) {
+            console.error(err);
+        }
     }
 }
