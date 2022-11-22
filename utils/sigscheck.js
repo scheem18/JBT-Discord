@@ -22,9 +22,9 @@ module.exports = {
             const embed = new EmbedBuilder()
             .setAuthor({name:'iOS Haven'})
             .setTitle('署名状況')
-            .setURL('https://ioshaven.com/search')
             .addFields(fields)
             .setColor('5662F6')
+            .setFooter({text:'Powered by iOS Haven and jailbreaks.app'})
             .setTimestamp();
             await webhook.send({embeds:[embed]});
         } catch (err) {
