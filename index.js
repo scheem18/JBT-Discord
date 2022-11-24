@@ -6,7 +6,7 @@ const app = require('express')()
         message:'online'
     })
 })
-.get('/translateMessages',(res,req) => {
+.get('/translateMessages',(req,res) => {
     const id = req.query.id;
     const targetLang = req.query.targetLang;
     if (!id || !targetLang) {
