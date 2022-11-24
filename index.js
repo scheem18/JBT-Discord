@@ -5,7 +5,8 @@ const app = require('express')()
     return res.json({
         message:'online'
     })
-.get('./translateMessages',(res,req) => {
+})
+.get('/translateMessages',(res,req) => {
     const id = req.query.id;
     const targetLang = req.query.targetLang;
     if (!id || !targetLang) {
@@ -26,7 +27,6 @@ const app = require('express')()
     } else {
         res.send(translateMessages[id].content)
     }
-})
 })
 .listen(PORT, () => {
     console.log(`Server running on ${PORT}`)
