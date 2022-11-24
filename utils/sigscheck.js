@@ -20,7 +20,6 @@ module.exports = {
             }
             const webhook = new WebhookClient({url:SIGNATURE_WEBHOOKURL});
             const embed = new EmbedBuilder()
-            .setAuthor({name:'iOS Haven'})
             .setTitle('署名状況')
             .addFields(fields)
             .setColor('5662F6')

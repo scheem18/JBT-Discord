@@ -1,11 +1,35 @@
+const translateMessages = require('./translateMessages');
+const PORT = process.env['PORT'] || 3000
 const app = require('express')()
 .get('/',(req,res) => {
-    res.json({
+    return res.json({
         message:'online'
-    });
+    })
+.get('./translateMessages',(res,req) => {
+    const id = req.query.id;
+    const targetLang = req.query.targetLang;
+    if (!id || !targetLang) {
+        return res.json({
+            status:'error',
+            message:'パラメーターが不足しています。'
+        });
+    } else if (!translateMessages[id]) {
+        return res.json({
+            status:'error',
+            message:'指定したIDのメッセージが見つかりませんでした'
+        });
+    } else if (!translateMessages[id]?.targetLang === targetLang) {
+        return res.json({
+            status:'error',
+            message:'指定したIDのメッセージが見つからないか、指定した言語で翻訳されていません。'
+        })
+    } else {
+        res.send(translateMessages[id].content)
+    }
 })
-.listen(process.env['PORT'], () => {
-    console.log(`Server running on ${process.env['PORT']}`)
+})
+.listen(PORT, () => {
+    console.log(`Server running on ${PORT}`)
 });
 
 const { Client, GatewayIntentBits, Partials, Collection, ActivityType } = require('discord.js');
@@ -64,6 +88,13 @@ const commandFiles = fs.readdirSync('./interactions/commands').filter(file => fi
 for (const file of commandFiles) {
     const command = require(`./interactions/commands/${file}`);
     client.slashCommands[command.data.name] = command;
+}
+
+client.contextMenus = new Collection();
+const contextFiles = fs.readdirSync('./interactions/contexts').filter(file => file.endsWith('.js'));
+for (const file of contextFiles) {
+    const context = require(`./interactions/contexts/${file}`);
+    client.contextMenus[context.data.name] = context;
 }
 
 client.login(TOKEN).catch(console.error);
