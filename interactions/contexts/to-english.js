@@ -25,7 +25,7 @@ module.exports = {
                     .addComponents(new ButtonBuilder()
                     .setLabel('全文を見る')
                     .setStyle(ButtonStyle.Link)
-                    .setURL(`https://jbt-scheem18.koyeb.app/translateText/?id=${targetId}&targetLang=en`)
+                    .setURL(`https://jbt-discord.onrender.com/translateText/?id=${targetId}&targetLang=en`)
                     );
                     await interaction.editReply({embeds:[embed],components:[row]});
                 } else {
@@ -51,7 +51,7 @@ module.exports = {
                     .addComponents(new ButtonBuilder()
                     .setLabel('全文を見る')
                     .setStyle(ButtonStyle.Link)
-                    .setURL(`https://jbt-scheem18.koyeb.app/translateText/?id=${targetId}&targetLang=en`)
+                    .setURL(`https://jbt-discord.onrender.com/translateText/?id=${targetId}&targetLang=en`)
                     );
                     await interaction.editReply({embeds:[embed],components:[row]});
                 } else {
