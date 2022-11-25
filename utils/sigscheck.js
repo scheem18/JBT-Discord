@@ -7,6 +7,7 @@ module.exports = {
     sigscheck: async () => {
         try {
             const get_ioshaven = await axios.get('https://ioshaven.com/search')
+            console.log(get_ioshaven.status)
             const ioshaven = new JSDOM(get_ioshaven.data).window.document;
             const jbapp = await axios.get('https://api.jailbreaks.app/status');
             const providers = [
@@ -14,9 +15,13 @@ module.exports = {
             ]
             const status = []
             const fields = []
-            Array.from(ioshaven.querySelectorAll('span.mr-1'), item => item.textContent).filter(x => x.match(/Revoked|Working|Signed/)).map(x => status.push(x));
+            ioshaven.querySelectorAll('span.mr-1').forEach(x => {
+                if (x.textContent.match(/Revoked|Working/)) {
+                    status.push(x.textContent);
+                }
+            })
+            
             await status.push(jbapp.data.status);
-            console.log(providers,status)
             for (let i = 0; i < 9; i++) {
                 fields.push({name:providers[i],value:status[i].replace(/Revoked/,'❌署名切れ').replace(/Working|Signed/,'✅復活中'),inline:true});
             }
