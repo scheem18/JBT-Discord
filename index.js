@@ -26,7 +26,7 @@ const app = require('express')()
             message:'指定したIDのメッセージが見つからないか、指定した言語で翻訳されていません。'
         })
     } else {
-        res.send(translateMessages[id].content)
+        res.send(translateMessages[id][targetLang].content)
     }
 })
 .listen(PORT, () => {
