@@ -47,17 +47,19 @@ module.exports = {
                 .setDescription(text.length > 4096 ? text.slice(0,4096) : text)
                 .setColor('White')
                 .setFooter({text:'Powered by DeepL Translator'});
+                const row = new ActionRowBuilder()
+                .addComponents(new ButtonBuilder()
+                .setLabel('Jump')
+                .setStyle(ButtonStyle.Link)
+                .setURL(`https://discord.com/channels/${interaction.guildId}/${interaction.channelId}/${targetId}`))
                 if (text.length > 4096) {
-                    const row = new ActionRowBuilder()
-                    .addComponents(new ButtonBuilder()
+                    row.addComponents(new ButtonBuilder()
                     .setLabel('全文を見る')
                     .setStyle(ButtonStyle.Link)
                     .setURL(`https://jbt-discord.onrender.com/translateText/?id=${targetId}&targetLang=en`)
                     );
-                    await interaction.editReply({embeds:[embed],components:[row]});
-                } else {
-                    await interaction.editReply({embeds:[embed]});
                 }
+                await interaction.editReply({embeds:[embed],components:[row]});
             } catch (err) {
                 await interaction.editReply({content:'エラーが発生したため翻訳が出来ませんでした'})
                 console.error(err);
