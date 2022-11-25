@@ -20,7 +20,7 @@ const app = require('express')()
             status:'error',
             message:'指定したIDのメッセージが見つかりませんでした'
         });
-    } else if (!translateMessages[id]?.targetLang === targetLang) {
+    } else if (!translateMessages[id][targetLang]) {
         return res.json({
             status:'error',
             message:'指定したIDのメッセージが見つからないか、指定した言語で翻訳されていません。'
