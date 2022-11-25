@@ -7,7 +7,7 @@ module.exports = {
     sigscheck: async () => {
         try {
             const get_ioshaven = await axios.get('https://ioshaven.com/search')
-            console.log(get_ioshaven.status)
+            console.log(get_ioshaven.data)
             const ioshaven = new JSDOM(get_ioshaven.data).window.document;
             const jbapp = await axios.get('https://api.jailbreaks.app/status');
             const providers = [
