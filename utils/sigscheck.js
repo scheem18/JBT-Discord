@@ -15,6 +15,7 @@ module.exports = {
             const fields = []
             Array.from(ioshaven.querySelectorAll('span.mr-1'), item => item.textContent).filter(x => x.match(/Revoked|Working|Signed/)).map(x => status.push(x));
             await status.push(jbapp.data.status);
+            console.log(providers,status)
             for (let i = 0; i < 9; i++) {
                 fields.push({name:providers[i],value:status[i].replace(/Revoked/,'❌署名切れ').replace(/Working|Signed/,'✅復活中'),inline:true});
             }
