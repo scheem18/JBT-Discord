@@ -20,18 +20,19 @@ module.exports = {
                 .setDescription(translateMessages[targetId].ja.content.length > 4096 ? translateMessages[targetId].ja.content.slice(0,4096) : translateMessages[targetId].ja.content)
                 .setColor('White')
                 .setFooter({text:'Powered by DeepL Translator'});
+                const row = new ActionRowBuilder()
+                .addComponents(new ButtonBuilder()
+                .setLabel('Jump')
+                .setStyle(ButtonStyle.Link)
+                .setURL(`https://discord.com/channels/${interaction.guildId}/${interaction.channelId}/${targetId}`))
                 if (translateMessages[targetId].ja.content.length > 4096) {
-                    const row = new ActionRowBuilder()
-                    .addComponents(new ButtonBuilder()
+                    row.addComponents(new ButtonBuilder()
                     .setLabel('全文を見る')
                     .setStyle(ButtonStyle.Link)
                     .setURL(`https://jbt-discord.onrender.com/translateText/?id=${targetId}&targetLang=ja`)
                     );
-                    await interaction.editReply({embeds:[embed],components:[row]});
-                } else {
-                    await interaction.editReply({embeds:[embed]});
                 }
-                return;
+                await interaction.editReply({embeds:[embed],components:[row]});
             }
             try {
                 const { text, detectedSourceLang } = await translator.translateText(message.content,null,'ja');

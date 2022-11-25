@@ -1,4 +1,3 @@
-console.log(process.env)
 const translateMessages = require('./translateMessages');
 const PORT = process.env['PORT'] || 3000
 const app = require('express')()
