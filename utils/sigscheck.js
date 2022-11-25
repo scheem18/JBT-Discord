@@ -6,7 +6,8 @@ const { SIGNATURE_WEBHOOKURL } = require('../config');
 module.exports = {
     sigscheck: async () => {
         try {
-            const ioshaven = new JSDOM((await (axios.get('https://ioshaven.com/search'))).data).window.document;
+            const get_ioshaven = await axios.get('https://ioshaven.com/search')
+            const ioshaven = new JSDOM(get_ioshaven.data).window.document;
             const jbapp = await axios.get('https://api.jailbreaks.app/status');
             const providers = [
                 'App Valley','Apple','CokernutX','EonHub','iOS Gods','iOS Haven','Panda Helper','TutuBox','Jailbreaks.app'
