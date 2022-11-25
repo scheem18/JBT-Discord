@@ -18,6 +18,7 @@ module.exports = {
             for (let i = 0; i < 9; i++) {
                 fields.push({name:providers[i],value:status[i].replace(/Revoked/,'❌署名切れ').replace(/Working|Signed/,'✅復活中'),inline:true});
             }
+            console.log(fields)
             const webhook = new WebhookClient({url:SIGNATURE_WEBHOOKURL});
             const embed = new EmbedBuilder()
             .setTitle('署名状況')
