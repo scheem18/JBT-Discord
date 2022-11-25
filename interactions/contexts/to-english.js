@@ -33,6 +33,7 @@ module.exports = {
                     );
                 }
                 await interaction.editReply({embeds:[embed],components:[row]});
+                return;
             }
             try {
                 const { text, detectedSourceLang } = await translator.translateText(message.content,null,'en-US');
