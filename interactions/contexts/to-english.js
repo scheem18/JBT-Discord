@@ -14,33 +14,18 @@ module.exports = {
         if (!message.content) {
             return await interaction.editReply({content:'選択したメッセージに内容がありません。'});
         } else {
-            if (translateMessages[targetId]?.en) {
-                const embed = new EmbedBuilder()
-                .setTitle(`${translateMessages[targetId].en.detectedSourceLang} から en に翻訳`)
-                .setDescription(translateMessages[targetId].en.content.length > 4096 ? translateMessages[targetId].en.content.slice(0,4096) : translateMessages[targetId].en.content)
-                .setColor('White')
-                .setFooter({text:'Powered by DeepL Translator'});
-                const row = new ActionRowBuilder()
-                .addComponents(new ButtonBuilder()
-                .setLabel('Jump')
-                .setStyle(ButtonStyle.Link)
-                .setURL(`https://discord.com/channels/${interaction.guildId}/${interaction.channelId}/${targetId}`))
-                if (translateMessages[targetId].en.content.length > 4096) {
-                    row.addComponents(new ButtonBuilder()
-                    .setLabel('全文を見る')
-                    .setStyle(ButtonStyle.Link)
-                    .setURL(`https://jbt-discord.onrender.com/translateText/?id=${targetId}&targetLang=en`)
-                    );
-                }
-                await interaction.editReply({embeds:[embed],components:[row]});
-                return;
-            }
             try {
-                const { text, detectedSourceLang } = await translator.translateText(message.content,null,'en-US');
+                const text = (translateMessages[targetId]?.en?.before?.content === message.content) ? translateMessages[targetId].en.after.content : (await (translator.translateText(message.content,null,'en-US'))).text;
+                const detectedSourceLang = translateMessages[targetId]?.en?.detectedSourceLang ? translateMessages[targetId].en.detectedSourceLang : (await (translator.translateText(message.content,null,'en-US'))).detectedSourceLang;
                 translateMessages[targetId] = {
                     'en':{
                         detectedSourceLang:detectedSourceLang,
-                        content:text
+                        before: {
+                            content: message.content
+                        },
+                        after: {
+                            content: text
+                        }
                     }
                 }
                 const embed = new EmbedBuilder()
@@ -62,8 +47,8 @@ module.exports = {
                 }
                 await interaction.editReply({embeds:[embed],components:[row]});
             } catch (err) {
-                await interaction.editReply({content:'エラーが発生したため翻訳が出来ませんでした'})
                 console.error(err);
+                await interaction.editReply({content:'エラーが発生したため翻訳が出来ませんでした'});
             }
         }
 	},
