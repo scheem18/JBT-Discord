@@ -61,6 +61,9 @@ const client = new Client({
                 url:'https://getsileo.app/'
             }
         ]
+    },
+    allowedMentions:{
+        repliedUser:false
     }
 });
 const cron = require('node-cron');

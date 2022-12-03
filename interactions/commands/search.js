@@ -1,7 +1,6 @@
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
 const axios = require('axios');
 const google = require('googlethis');
-const reactionPagination = require('../../library/pagination');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -41,58 +40,45 @@ module.exports = {
         const query = interaction.options.getString('query');
         if (interaction.options.getSubcommand() === 'tweaks') {
             await interaction.deferReply();
-            const embeds = []
             try {
-                const { data } = await axios.get(`https://api.canister.me/v2/jailbreak/package/search?q=${query}`);
-                if (!data.data[0]) return await interaction.editReply({content:'パッケージが見つかりませんでした。'});
-                while (data.data.length > 5) {
-                    data.data.pop();
-                }
-                console.log(data.data)
-                data.data.map(x => {
-                    embeds.push(
-                        new EmbedBuilder()
-                        .setTitle(`${x.name ?? 'パッケージ名無し'}`)
-                        .setDescription(`${x.description.length > 4000 ? x.description.slice(0,4000) : x.description}` ?? null)
-                        .addFields(
-                            {name:'パッケージID',value:x.package},
-                            {name:'作成者',value:`${x.author}`,inline:true},
-                            {name:'バージョン',value:`${x.version}`,inline:true},
-                            {name:'リポジトリ',value:x.repositorySlug,inline:true},
-                            {name:'価格',value:x.price,inline:true},
-                            {name:'カテゴリー',value:x.section,inline:true},
-                        )
-                    );
-                });
-                if (embeds.length === 1) return await interaction.editReply({embeds:[embeds[0]]});
-                await reactionPagination.editReply({interaction,embeds});
+                const pkg = (await (axios.get(`https://api.canister.me/v2/jailbreak/package/search?q=${query}`))).data.data[0];
+                if (!pkg) return await interaction.editReply({content:'パッケージが見つかりませんでした。'});
+                const repo = (await (axios.get(`${pkg.refs.repo}`))).data.data;
+                const embed = new EmbedBuilder()
+                .setAuthor({name:`${repo.name}`,iconURL:`${repo.uri}/CydiaIcon.png`,url:`${repo.uri}`})
+                .setTitle(`${pkg.name ?? null}`)
+                .setDescription(`${pkg.description.length > 4000 ? pkg.description.slice(0,4000) : pkg.description}` ?? null)
+                .setThumbnail(pkg.icon ?? null)
+                .addFields(
+                    {name:'パッケージID',value:pkg.package},
+                    {name:'作成者',value:`${pkg.author}`,inline:true},
+                    {name:'バージョン',value:`${pkg.version}`,inline:true},
+                    {name:'リポジトリ',value:`[${repo.name}](${repo.uri})`,inline:true},
+                    {name:'価格',value:pkg.price,inline:true},
+                    {name:'カテゴリー',value:pkg.section,inline:true},
+                )
+                .setFooter({text:'Powered by canister.me'})
+                await interaction.editReply({embeds:[embed]});
             } catch (err) {
                 console.error(err);
                 return await interaction.editReply({content:'パッケージを取得出来ませんでした。'});
             }
         } else if (interaction.options.getSubcommand() === 'repos') {
             await interaction.deferReply();
-            const embeds = []
             try {
-                const { data } = await axios.get(`https://api.canister.me/v2/jailbreak/repository/search?q=${query}`);
-                if (!data.data[0]) return await interaction.editReply({content:'リポジトリが見つかりませんでした。'});
-                while (data.data.length > 5) {
-                    data.data.pop();
-                }
-                data.data.map(x => {
-                    embeds.push(
-                        new EmbedBuilder()
-                        .setTitle(`${x.slug}`)
-                        .setURL(x.uri)
-                        .setDescription(`${x.description}` ?? null)
-                        .addFields(
-                            {name:'パッケージ数',value:`${x.packageCount}`,inline:true},
-                            {name:'バージョン',value:`${x.version}`,inline:true}
-                        )
-                    );
-                });
-                if (embeds.length === 1) return await interaction.editReply({embeds:[embeds[0]]});
-                await reactionPagination.editReply({interaction,embeds});
+                const repo = (await (axios.get(`https://api.canister.me/v2/jailbreak/repository/search?q=${query}`))).data.data[0];
+                if (!repo) return await interaction.editReply({content:'リポジトリが見つかりませんでした。'});
+                const embed = new EmbedBuilder()
+                .setTitle(`${repo.name}`)
+                .setURL(repo.uri)
+                .setDescription(`${repo.description}` ?? null)
+                .setThumbnail(`${repo.uri}/CydiaIcon.png`)
+                .addFields(
+                    {name:'パッケージ数',value:`${repo.packageCount}`,inline:true},
+                    {name:'バージョン',value:`${repo.version}`,inline:true}
+                )
+                .setFooter({text:'Powered by canister.me'})
+                await interaction.editReply({embeds:[embed]});
             } catch (err) {
                 console.error(err);
                 return await interaction.editReply({content:'リポジトリを取得出来ませんでした。'});
