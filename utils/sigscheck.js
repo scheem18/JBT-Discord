@@ -29,7 +29,7 @@ module.exports = {
             .setColor('5662F6')
             .setFooter({text:'Powered by iOS Haven and jailbreaks.app'})
             .setTimestamp();
-            await client.channels.cache.find(x => x.name === 'jbt署名通知').forEach(x => x.send({embeds:[embed]}));
+            await client.channels.cache.filter(x => x.name === 'jbt署名通知').forEach(x => x.send({embeds:[embed]}));
         } catch (err) {
             console.error(err);
         }
