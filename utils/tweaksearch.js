@@ -12,7 +12,7 @@ module.exports = {
             .setAuthor({name:`${repo.name}`,iconURL:`${repo.uri}/CydiaIcon.png`,url:`${repo.uri}`})
             .setTitle(`${pkg.name ?? null}`)
             .setDescription(`${pkg.description.length > 4000 ? pkg.description.slice(0,4000) : pkg.description}` ?? null)
-            .setThumbnail(pkg.icon ?? null)
+            .setThumbnail(pkg.icon.startsWith('file://') ? null : pkg.icon ?? null)
             .addFields(
                 {name:'パッケージID',value:pkg.package},
                 {name:'作成者',value:`${pkg.author}`,inline:true},
