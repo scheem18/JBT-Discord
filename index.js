@@ -67,11 +67,11 @@ const client = new Client({
     }
 });
 const cron = require('node-cron');
+require('dotenv').config();
 require('./utils/sigscheck').sigscheck(client);
 cron.schedule('0 0,12 * * *', () => {
     require('./utils/sigscheck').sigscheck(client);
 });
-const { TOKEN } = require('./config');
 const { Player } = require("discord-player");
 client.player = new Player(client);
 client.player.on("trackStart", (queue, track) => queue.metadata.channel.send(`再生開始:**[${track.title}](${track.url})**`));
@@ -100,4 +100,4 @@ for (const file of contextFiles) {
     client.contextMenus[context.data.name] = context;
 }
 
-client.login(TOKEN).catch(console.error);
+client.login(process.env['TOKEN']).catch(console.error);

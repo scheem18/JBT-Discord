@@ -1,6 +1,6 @@
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v10");
-const { TOKEN, ID } = require('./config');
+require('dotenv').config();
 const fs = require("fs");
 
 const commands = [];
@@ -19,15 +19,13 @@ for (const file of contextFiles) {
   commands.push(contexts.data.toJSON());
 }
 
-const rest = new REST({ version: "10" }).setToken(TOKEN);
+const rest = new REST({ version: "10" }).setToken(process.env['TOKEN']);
 
 (async () => {
   try {
     console.log("スラッシュコマンド登録");
     await rest.put(
-      Routes.applicationCommands(
-        ID
-      ),
+      Routes.applicationCommands(process.env['ID']),
       { body: commands }
     );
   } catch (err) {

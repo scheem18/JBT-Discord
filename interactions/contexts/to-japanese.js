@@ -1,7 +1,7 @@
 const deepl = require('deepl-node');
 const translateMessages = require('../../translateMessages');
-const { DEEPL_TOKEN } = require('../../config');
-const translator = new deepl.Translator(DEEPL_TOKEN);
+require('dotenv').config();
+const translator = new deepl.Translator(process.env['DEEPL_TOKEN']);
 const { ContextMenuCommandBuilder, ApplicationCommandType, EmbedBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 module.exports = {
     data: new ContextMenuCommandBuilder()
