@@ -1,6 +1,6 @@
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
 const Parser = require('rss-parser');
-const parser = new Parser();
+const t4h = require('../../library/t4h');
 const reactionPagination = require('../../library/pagination');
 
 module.exports = {
@@ -16,17 +16,16 @@ module.exports = {
         const embeds = [];
         const query = interaction.options.getString('search');
         try {
-            const article = await parser.parseURL(`https://tools4hack.santalab.me/rss/${!query ? '' : `?s=${query}`}`);
-            while (article.items.length > 5) {
-                article.items.pop();
-            }
-            article.items.map(x => {
+            const articles = await t4h.get(query);
+            if (!articles) return await interaction.editReply({content:'記事が見つかりませんでした。'});
+            articles.map((article) => {
                 embeds.push(
                     new EmbedBuilder()
                     .setAuthor({name:'Tools 4 Hack'})
-                    .setTitle(x.title)
-                    .setURL(x.link)
-                    .setDescription(x.content)
+                    .setTitle(article.title)
+                    .setImage(article.thumbnail)
+                    .setURL(article.link)
+                    .setDescription(article.snippet)
                 );
             });
             if (embeds.length === 1) return await interaction.editReply({embeds:[embeds[0]]});

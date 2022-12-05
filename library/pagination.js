@@ -1,11 +1,11 @@
 const emojilist = ['◀️','▶️','🗑'];
 module.exports = {
     editReply: async ({interaction,embeds}) => {
-        const reply = await interaction.editReply({embeds:[embeds[0]]});
+        const reply = await interaction.editReply({embeds:[embeds[0].setFooter({text:`1/${embeds.length}ページ目`})]});
         await editPages({reply,interaction,embeds})
     },
     reply: async ({interaction,embeds}) => {
-        const reply = await interaction.reply({embeds:[embeds[0]]});
+        const reply = await interaction.reply({embeds:[embeds[0].setFooter({text:`1/${embeds.length}ページ目`})]});
         await editPages({reply,interaction,embeds});
     }
 }
