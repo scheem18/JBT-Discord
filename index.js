@@ -72,6 +72,10 @@ require('./utils/sigscheck').sigscheck(client);
 cron.schedule('0 0,12 * * *', () => {
     require('./utils/sigscheck').sigscheck(client);
 });
+const axios = require('axios');
+axios.get('https://api.appledb.dev/main.json').then(({data}) => {
+    fs.writeFileSync('main.json', JSON.stringify(data), 'utf-8');
+});
 const { Player } = require("discord-player");
 client.player = new Player(client);
 client.player.on("trackStart", (queue, track) => queue.metadata.channel.send(`再生開始:**[${track.title}](${track.url})**`));
