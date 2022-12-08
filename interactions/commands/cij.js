@@ -21,32 +21,35 @@ module.exports = {
         try {
             await interaction.deferReply();
             const data = JSON.parse(fs.readFileSync('main.json'));
-            const device = interaction.options.getString('device');
-            const version = interaction.options.getString('version');
-            const device_name = data.device.filter(x => x.key.toLowerCase() === device.toLowerCase())[0].name;
-            const firmware = data.ios.filter(x => x.uniqueBuild === version)[0];
-            const embeds = [];
-            data.jailbreak.map(x => {
-                if (x.compatibility) {
-                    x.compatibility.map(y => {
-                        if (y.devices.includes(device) && y.firmwares.includes(version)) {
+            const input_device = interaction.options.getString('device');
+            const input_version = interaction.options.getString('version');
+            const device = data.group.filter(group => (group.type === 'iPhone' && group.key.toLowerCase() === input_device.toLowerCase()));
+            const version = data.ios.filter(ios => (ios.osStr === 'iOS' && ios.version === input_version));
+            const jailbreaks = data.jailbreak.filter(jb => jb.compatibility);
+            const found_jbs = []
+            const embeds = []
+            jailbreaks.map(jb => {
+                jb.compatibility.forEach(compatible => {
+                    if (compatible.devices.includes(device[0].devices[0]) && compatible.firmwares.includes(version[0].internal ? version[0+1].uniqueBuild : version[0].uniqueBuild)) {
+                        if (!found_jbs.includes(jb.name)) {
+                            found_jbs.push(jb.name);
                             embeds.push(
                                 new EmbedBuilder()
                                 .setTitle('あなたのデバイスは脱獄可能です！')
-                                .setDescription(`${x.name}は${device_name}, ${firmware.osStr} ${firmware.version}上で動作可能です。`)
+                                .setDescription(`${jb.name}は${input_device}, iOS ${input_version}上で動作可能です！`)
                                 .addFields([
-                                    {name:`${x.info.latestVer ? 'バージョン' : '\u200b'}`, value:`${x.info.latestVer ?? '\u200b'}`, inline:true},
-                                    {name:'対応バージョン', value:`${x.info.firmwares[0]} - ${x.info.firmwares[1]}`, inline:true},
-                                    {name:'脱獄タイプ', value: x.info.type, inline:true},
-                                    {name:`${x.info.notes ? 'note' : '\u200b'}`, value:`${x.info.notes ?? '\u200b'}`, inline:true},
-                                    {name:`${x.info?.website?.url ? 'サイト' : '\u200b'}`, value:`${x.info?.website?.url ?? '\u200b'}`}
+                                    {name:'対応バージョン', value:`${jb.info.firmwares[0]} - ${jb.info.firmwares[1]}`, inline:true},
+                                    {name:'脱獄タイプ', value: jb.info.type, inline:true},
+                                    {name:`${jb.info.latestVer ? 'バージョン' : '\u200b'}`, value:`${jb.info.latestVer ?? '\u200b'}`, inline:true},
+                                    {name:`${jb.info?.website?.url ? 'サイト' : '\u200b'}`, value:`${jb.info?.website?.url ?? '\u200b'}`},
+                                    {name:`${jb.info.notes ? 'note' : '\u200b'}`, value:`${jb.info.notes ?? '\u200b'}`, inline:true}
                                 ])
-                                .setColor(x.info.color ?? null)
-                                .setThumbnail(`https://appledb.dev${x.info.icon}`)
-                            )
+                                .setColor(jb.info.color ?? null)
+                                .setThumbnail(`https://appledb.dev${jb.info.icon}`)
+                            );
                         }
-                    })
-                }
+                    }
+                });
             });
             if (!embeds[0]) return await interaction.editReply({content:'残念ですが、あなたのデバイスを脱獄することは出来ません。'});
             if (embeds.length === 1) return await interaction.editReply({embeds:[embeds[0]]});
