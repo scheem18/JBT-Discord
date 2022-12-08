@@ -12,7 +12,7 @@ module.exports = {
             const links = Array.from((document.querySelectorAll('a.entry-card-wrap.a-wrap.border-element.cf')), item => item.getAttribute('href'));
             if (!titles[0]) return;
             const article = [];
-            for (let i = 0; i <= 4; i++) {
+            for (let i = 0; i < titles.length; i++) {
                 article.push(
                     {
                         title:titles[i],

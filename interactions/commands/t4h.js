@@ -18,6 +18,9 @@ module.exports = {
         try {
             const articles = await t4h.get(query);
             if (!articles) return await interaction.editReply({content:'記事が見つかりませんでした。'});
+            while (articles.length > 5) {
+                articles.pop();
+            }
             articles.map((article) => {
                 embeds.push(
                     new EmbedBuilder()
