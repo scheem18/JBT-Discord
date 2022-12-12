@@ -4,7 +4,7 @@ const axios = require('axios');
 module.exports = {
     search: async (message, query) => {
         try {
-            await message.sendTyping;
+            await message.channel.sendTyping();
             const pkg = (await (axios.get(`https://api.canister.me/v1/community/packages/search?query=${encodeURIComponent(query)}&limit=1&responseFields=name,description,author,price,packageIcon,depiction,repository.name,repository.uri,latestVersion,identifier`))).data.data[0];
             if (!pkg) return await message.reply({content:'パッケージが見つかりませんでした。'});
             const embed = new EmbedBuilder()
