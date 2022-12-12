@@ -21,6 +21,9 @@ module.exports = {
         });
       }
       await context.run({ client, interaction });
+    } else if (interaction.isAutocomplete()) {
+      const autocomplete = client.autoComplete[interaction.commandName];
+      await autocomplete.run({ client, interaction });
     }
 	}
 }

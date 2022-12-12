@@ -101,4 +101,11 @@ for (const file of contextFiles) {
     client.contextMenus[context.data.name] = context;
 }
 
+client.autoComplete = new Collection();
+const autoCompleteFiles = fs.readdirSync('./interactions/autocomplete').filter(file => file.endsWith('.js'));
+for (const file of autoCompleteFiles) {
+    const autocomplete = require(`./interactions/autocomplete/${file}`);
+    client.autoComplete[autocomplete.data.name] = autocomplete;
+}
+
 client.login(process.env['TOKEN']).catch(console.error);
