@@ -13,9 +13,7 @@ module.exports = {
         const T4H_URL = /http(?:s)?:\/\/tools4hack.santalab.me\/([a-zA-Z0-9-]{1,1000}).html/g
         if (message.content.match(T4H_URL)) {
             const url = message.content.match(T4H_URL);
-            console.log(url)
             const { data } = await axios.get(url[0]);
-            console.log(data)
             const document = new JSDOM(data).window.document;
             const title = Array.from((document.querySelectorAll('h1.entry-title')), item => item.textContent.trim());
             const description = Array.from((document.querySelectorAll('p')), item => item.textContent.trim());
