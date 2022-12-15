@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, PermissionsBitField } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -6,6 +6,7 @@ module.exports = {
     .setDescription('ばん'),
 
     run: async ({interaction}) => {
+        if (!interaction.guild || !interaction.member.permissions.has(PermissionsBitField.Flags.BanMembers)) return;
         const focused = interaction.options.getFocused(true);
         if (focused.name === 'user') {
             const fetch_bans = await interaction.guild.bans.fetch();
