@@ -10,10 +10,10 @@ module.exports = {
         while ((result = PKG_PATTERN.exec(message.content)) !== null) {
             require('../utils/tweaksearch').search(message, result.groups.pkgname);
         }
-        if (message.content.match(/http(?:s)?:\/\/tools4hack.santalab.me\/([\w-]{1,}).html/g)) {
+        const T4H_PATTERN = /http(?:s)?:\/\/tools4hack.santalab.me\/([\w-]{1,}).html/g
+        while ((result = T4H_PATTERN.exec(message.content)) !== null) {
             try {
-                const url = message.content.match(/http(?:s)?:\/\/tools4hack.santalab.me\/([\w-]{1,}).html/g);
-                const { data } = await axios.get(url[0]);
+                const { data } = await axios.get(result[0]);
                 const document = new JSDOM(data).window.document;
                 const title = Array.from((document.querySelectorAll('h1.entry-title')), item => item.textContent.trim());
                 const description = Array.from((document.querySelectorAll('p')), item => item.textContent.trim());
@@ -21,10 +21,10 @@ module.exports = {
                 const embed = new EmbedBuilder()
                 .setAuthor({name:'Tools 4 Hack'})
                 .setTitle(title[0])
-                .setURL(url[0])
+                .setURL(result[0])
                 .setDescription(description[0].length > 100 ? `${description[0].slice(0,100)}...` : description[0])
                 .setImage(thumbnail[0]);
-                message.channel.send({embeds:[embed]});
+                message.reply({embeds:[embed]});
             } catch (err) {
                 console.error(err);
             }
