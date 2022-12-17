@@ -5,15 +5,14 @@ const { JSDOM } = require('jsdom');
 module.exports = {
 	name: 'messageCreate',
 	execute: async (message, client) => {
-        if (message.content.startsWith('[[') && message.content.endsWith(']]')) {
-            const pkgname = message.content.slice(2,message.content.length - 2);
-            if (!pkgname) return;
-            require('../utils/tweaksearch').search(message, pkgname);
+        let result;
+        const PKG_PATTERN = /\[\[(?<pkgname>[\w-._]{1,})]]/g
+        while ((result = PKG_PATTERN.exec(message.content)) !== null) {
+            require('../utils/tweaksearch').search(message, result.groups.pkgname);
         }
-        const T4H_URL = /http(?:s)?:\/\/tools4hack.santalab.me\/([a-zA-Z0-9-]{1,1000}).html/g
-        if (message.content.match(T4H_URL)) {
+        if (message.content.match(/http(?:s)?:\/\/tools4hack.santalab.me\/([\w-]{1,}).html/g)) {
             try {
-                const url = message.content.match(T4H_URL);
+                const url = message.content.match(/http(?:s)?:\/\/tools4hack.santalab.me\/([\w-]{1,}).html/g);
                 const { data } = await axios.get(url[0]);
                 const document = new JSDOM(data).window.document;
                 const title = Array.from((document.querySelectorAll('h1.entry-title')), item => item.textContent.trim());
