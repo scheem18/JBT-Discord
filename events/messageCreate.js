@@ -7,7 +7,7 @@ module.exports = {
 	execute: async (message, client) => {
         if (message.author.bot) return;
         let result;
-        const PKG_PATTERN = /\[\[(?<pkgname>[\w-._]{1,})]]/g
+        const PKG_PATTERN = /\[\[(?<pkgname>[\w-._ ]{1,})]]/g
         while ((result = PKG_PATTERN.exec(message.content)) !== null) {
             require('../utils/tweaksearch').search(message, result.groups.pkgname);
         }
