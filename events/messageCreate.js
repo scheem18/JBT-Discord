@@ -5,6 +5,7 @@ const { JSDOM } = require('jsdom');
 module.exports = {
 	name: 'messageCreate',
 	execute: async (message, client) => {
+        if (message.author.bot) return;
         let result;
         const PKG_PATTERN = /\[\[(?<pkgname>[\w-._]{1,})]]/g
         while ((result = PKG_PATTERN.exec(message.content)) !== null) {
