@@ -6,7 +6,7 @@ module.exports = {
         try {
             await message.channel.sendTyping();
             const pkg = (await (axios.get(`https://api.canister.me/v1/community/packages/search?query=${encodeURIComponent(query)}&limit=1&responseFields=name,description,author,price,packageIcon,depiction,repository.name,repository.uri,latestVersion,identifier`))).data.data[0];
-            if (!pkg) return await message.reply({content:'パッケージが見つかりませんでした。'});
+            if (!pkg) return await message.reply({content:`${query}に一致するパッケージが見つかりませんでした。`});
             const embed = new EmbedBuilder()
             .setAuthor({name:`${pkg.repository.name}`,iconURL:`${pkg.repository.uri}/CydiaIcon.png`,url:`${pkg.repository.uri}`})
             .setTitle(pkg.name ?? pkg.identifier)
