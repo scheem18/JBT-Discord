@@ -5,13 +5,14 @@ module.exports = {
     search: async (message, query) => {
         try {
             await message.channel.sendTyping();
-            const pkg = (await (axios.get(`https://api.canister.me/v1/community/packages/search?query=${encodeURIComponent(query)}&limit=1&responseFields=name,description,author,price,packageIcon,depiction,repository.name,repository.uri,latestVersion,identifier`))).data.data[0];
+            const pkg = (await (axios.get(`https://api.canister.me/v1/community/packages/search?query=${encodeURIComponent(query)}&searchFields=name,identifier&limit=1&responseFields=*`))).data.data[0];
             if (!pkg) return await message.reply({content:`${query}に一致するパッケージが見つかりませんでした。`});
             const embed = new EmbedBuilder()
             .setAuthor({name:`${pkg.repository.name}`,iconURL:`${pkg.repository.uri}/CydiaIcon.png`,url:`${pkg.repository.uri}`})
             .setTitle(pkg.name ?? pkg.identifier)
             .setDescription(`${pkg.description.length > 4000 ? pkg.description.slice(0,4000) : pkg.description}` ?? null)
             .setThumbnail(pkg.packageIcon?.startsWith('file://') ? null : pkg.packageIcon)
+            .setColor(pkg.tintColor)
             .addFields(
                 {name:'パッケージID',value:pkg.identifier},
                 {name:'作成者',value:`${pkg.author}`,inline:true},
