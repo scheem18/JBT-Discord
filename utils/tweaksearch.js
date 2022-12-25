@@ -5,7 +5,7 @@ module.exports = {
     search: async (message, query) => {
         try {
             await message.channel.sendTyping();
-            const pkg = (await (axios.get(`https://api.canister.me/v1/community/packages/search?query=${encodeURIComponent(query)}&searchFields=name,identifier&limit=1&responseFields=*`))).data.data[0];
+            const pkg = (await (axios.get(`https://api.canister.me/v1/community/packages/search?query=${encodeURIComponent(query)}&searchFields=name,identifier&limit=1&responseFields=*,repository.name,repository.uri`))).data.data[0];
             if (!pkg) return await message.reply({content:`${query}に一致するパッケージが見つかりませんでした。`});
             const embed = new EmbedBuilder()
             .setAuthor({name:`${pkg.repository.name}`,iconURL:`${pkg.repository.uri}/CydiaIcon.png`,url:`${pkg.repository.uri}`})
@@ -20,7 +20,7 @@ module.exports = {
                 {name:'リポジトリ',value:`[${pkg.repository.name}](${pkg.repository.uri})`,inline:true},
                 {name:'価格',value:pkg.price,inline:true}
             )
-            .setFooter({text:'Powered by canister.me'})
+            .setFooter({text:'Powered by canister.me'});
             await message.reply({embeds:[embed]});
         } catch (err) {
             console.error(err);
