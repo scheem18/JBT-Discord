@@ -1,32 +1,9 @@
-const translateMessages = require('./translateMessages');
 const PORT = process.env['PORT'] || 3000
-const app = require('express')()
+require('express')()
 .get('/',(req,res) => {
     return res.json({
         message:'online'
     })
-})
-.get('/translateMessages',(req,res) => {
-    const id = req.query.id;
-    const targetLang = req.query.targetLang;
-    if (!id || !targetLang) {
-        return res.json({
-            status:'error',
-            message:'パラメーターが不足しています。'
-        });
-    } else if (!translateMessages[id]) {
-        return res.json({
-            status:'error',
-            message:'指定したIDのメッセージが見つかりませんでした'
-        });
-    } else if (!translateMessages[id][targetLang]) {
-        return res.json({
-            status:'error',
-            message:'指定したIDのメッセージが見つからないか、指定した言語で翻訳されていません。'
-        })
-    } else {
-        res.send(translateMessages[id][targetLang].content)
-    }
 })
 .listen(PORT, () => {
     console.log(`Server running on ${PORT}`)
