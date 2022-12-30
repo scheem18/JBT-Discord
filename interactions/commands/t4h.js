@@ -31,8 +31,7 @@ module.exports = {
                     .setDescription(article.snippet)
                 );
             });
-            if (embeds.length === 1) return await interaction.editReply({embeds:[embeds[0]]});
-            await reactionPagination.editReply({interaction,embeds});
+            await reactionPagination.interaction.editReply({interaction,embeds});
         } catch (err) {
             console.error(err);
             return await interaction.editReply({content:'記事を取得出来ませんでした。'});
