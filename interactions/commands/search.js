@@ -43,7 +43,7 @@ module.exports = {
             await interaction.deferReply();
             try {
                 const embeds = [];
-                const pkgs = (await (axios.get(`https://api.canister.me/v1/community/packages/search?query=${encodeURIComponent(query)}&searchFields=name,identifier&limit=5&responseFields=*,repository.name,repository.uri`))).data.data;
+                const pkgs = (await (axios.get(`https://api.canister.me/v1/community/packages/search?query=${encodeURIComponent(query)}&searchFields=name,identifier,description&limit=5&responseFields=*,repository.name,repository.uri`))).data.data;
                 if (!pkgs[0]) return await message.reply({content:`${query}に一致するパッケージが見つかりませんでした。`});
                 pkgs.forEach(pkg => {
                     embeds.push(
