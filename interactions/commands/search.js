@@ -1,7 +1,7 @@
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
 const axios = require('axios');
 const google = require('googlethis');
-const reactionPagination = require('../../library/pagination');
+const { InteractionEmbedControl } = require('../../library/embed-controller');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -41,6 +41,7 @@ module.exports = {
         const query = interaction.options.getString('query');
         if (interaction.options.getSubcommand() === 'tweaks') {
             await interaction.deferReply();
+            const controller = new InteractionEmbedControl(interaction);
             try {
                 const embeds = [];
                 const pkgs = (await (axios.get(`https://api.canister.me/v1/community/packages/search?query=${encodeURIComponent(query)}&searchFields=name,identifier,description&limit=5&responseFields=*,repository.name,repository.uri`))).data.data;
@@ -66,7 +67,8 @@ module.exports = {
                         )
                     );
                 });
-                await reactionPagination.interaction.editReply({embeds,interaction});
+                await controller.setEmbeds(embeds);
+                await controller.reply({deferred:true});
             } catch (err) {
                 console.error(err);
                 return await interaction.editReply({content:'パッケージを取得出来ませんでした。'});

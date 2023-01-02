@@ -1,6 +1,6 @@
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
 const axios = require('axios');
-const reactionPagination = require('../../library/pagination');
+const { InteractionEmbedControl } = require('../../library/embed-controller');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -21,7 +21,8 @@ module.exports = {
 
     run: async ({interaction}) => {
         await interaction.deferReply();
-        let embeds = [];
+        const controller = new InteractionEmbedControl(interaction);
+        const embeds = [];
         const createList = async (data, platform) => {
             data[platform].map((res) => {
                 embeds.push(
@@ -39,7 +40,8 @@ module.exports = {
         }
         axios.get('https://dhinakg.github.io/check-pallas/minified-v3.json').then(async ({data}) => {
             await createList(data, interaction.options.getString('プラットフォーム'));
-            await reactionPagination.editReply({interaction,embeds});
+            await controller.setEmbeds(embeds);
+            await controller.reply({deferred:true});
         }).catch((err) => {
             interaction.editReply({content:'データを取得できませんでした'});
             console.log(err);
