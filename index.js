@@ -46,23 +46,22 @@ const client = new Client({
         repliedUser:false
     }
 });
-const cron = require('node-cron');
+
 require('dotenv').config();
-require('./utils/sigscheck').sigscheck(client);
-cron.schedule('0 0,12 * * *', () => {
+setInterval(() => {
     require('./utils/sigscheck').sigscheck(client);
-});
-const axios = require('axios');
+},43200000);
 const { Player } = require("discord-player");
 client.player = new Player(client);
-client.player.on("trackStart", (queue, track) => queue.metadata.channel.send(`再生開始:**[${track.title}](${track.url})**`));
 const fs = require('fs');
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
 for (const file of eventFiles) {
 	const event = require(`./events/${file}`);
 	if (event.once) {
 		client.once(event.name, (...args) => event.execute(...args, client));
-	} else {
+	} else if (event.player) {
+        client.player.on(event.name, (...args) => event.execute(...args, client));
+    } else {
 		client.on(event.name, (...args) => event.execute(...args, client));
 	}
 }
