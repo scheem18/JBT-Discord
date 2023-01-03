@@ -73,7 +73,7 @@ module.exports = {
                         page = page + 1 < embeds.size ? ++page : 0;
                         break;
                     case emojiList[2]:
-                        await this.message.delete().catch(()=>{});
+                        await reply.delete().catch(()=>{});
                         break;
                     default:
                         break;
