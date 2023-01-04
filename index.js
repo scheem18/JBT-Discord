@@ -1,3 +1,4 @@
+require('dotenv').config();
 const PORT = process.env['PORT'] || 3000
 require('express')()
 .get('/',(req,res) => {
@@ -47,7 +48,6 @@ const client = new Client({
     }
 });
 
-require('dotenv').config();
 setInterval(() => {
     require('./utils/sigscheck').sigscheck(client);
 },43200000);
