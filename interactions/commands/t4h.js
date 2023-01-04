@@ -20,17 +20,15 @@ module.exports = {
             while (articles.length > 5) {
                 articles.pop();
             }
-            await controller.setEmbeds(
-                articles.map((article) =>
+            const embeds = articles.map((article) =>
                 new EmbedBuilder()
                 .setAuthor({name:'Tools 4 Hack'})
                 .setTitle(article.title)
                 .setImage(article.thumbnail)
                 .setURL(article.link)
                 .setDescription(article.snippet)
-                )
             );
-            await controller.reply({deferred:true});
+            await controller.reply(embeds, {deferred:true});
         } catch (err) {
             console.error(err);
             return await interaction.editReply({content:'記事を取得出来ませんでした。'});
