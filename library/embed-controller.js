@@ -29,7 +29,7 @@ module.exports = {
                     default:
                         break;
                 }
-                this.interaction.editReply({embeds:[embeds[page].setFooter({text:`${page+1}/${embeds.size}ページ目`})]}).catch(()=>{});
+                this.interaction.editReply({embeds:[embeds[page].setFooter({text:`${page+1}/${embeds.length}ページ目`})]}).catch(()=>{});
             });
             reactionCollector.on('end', () => {
                 if (!reply.deleted) {
