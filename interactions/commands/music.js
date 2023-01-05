@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder } = require('discord.js');
 const { QueueRepeatMode } = require("discord-player");
 const playdl = require("play-dl");
 module.exports = {
@@ -91,8 +91,17 @@ module.exports = {
     return await interaction.followUp({
       embeds:[
         {
-          title:'キューに追加',
-          description:`[${track.title}](${track.url})をキューに追加しました`
+          author:{nane:'キューに追加'},
+          title:`${track.title}`,
+          url:`${track.url}`,
+          fields:[
+            {name:'時間', value:`${track.duration}`, inline:true},
+            {name:'チャンネル', value:`${track.author}`, inline:true},
+            {name:'再生数', value:`${track.views}`, inline:true}
+          ],
+          thumbnail:{
+            url:track.thumbnail
+          }
         }
       ]
     });
@@ -125,16 +134,9 @@ module.exports = {
         const queue = client.player.getQueue(interaction.guildId);
         if (!queue || !queue.playing) return void interaction.followUp({ content: "曲が再生されていません" });
           try {
-            if (interaction.options.getString('ループモード') === 'OFF') {
-              queue.setRepeatMode(QueueRepeatMode.OFF);
-              interaction.editReply({content:'ループ再生を無効にしました'})
-            } else if (interaction.options.getString('ループモード') === 'TRACK') {
-              queue.setRepeatMode(QueueRepeatMode.TRACK);
-              interaction.editReply({content:'ループモードをTRACKに変更しました。'});
-            } else if (interaction.options.getString('ループモード') === 'QUEUE') {
-              queue.setRepeatMode(QueueRepeatMode.QUEUE);
-              interaction.editReply({content:'ループモードをQUEUEに変更しました。'})
-            }
+            const mode = interaction.options.getString('ループモード');
+            await queue.setRepeatMode(QueueRepeatMode[mode]);
+            await interaction.editReply({content:`ループモードを${mode}に変更しました。`});
             } catch (err) {
             interaction.reply('ループモードを変更できませんでした')
           }
@@ -144,18 +146,20 @@ module.exports = {
         if (!queue || !queue.playing) return void interaction.followUp({ content: "音楽が再生されていません" });
         const progress = queue.createProgressBar();
         const perc = queue.getPlayerTimestamp();
-
         return void interaction.followUp({
             embeds: [
                 {
-                    title: "再生中",
-                    description: `[${queue.current.title}](${queue.current.url})`,
-                    fields: [
-                        {
-                            name: `${perc.progress}%`,
-                            value: progress
-                        }
-                    ]
+                  author:{name:'再生中'},
+                  title: `${queue.current.title}`,
+                  url:`${queue.current.url}`,
+                  thumbnail:{url:queue.current.thumbnail},
+                  fields: [
+                      {
+                          name: `${perc.progress}%`,
+                          value: progress
+                      }
+                  ],
+                  footer:{text:`${queue.current.requestedBy.tag}が再生`}
                 }
             ]
         })
@@ -167,7 +171,6 @@ module.exports = {
         const tracks = queue.tracks.slice(0, 10).map((m, i) => {
             return `${i + 1}:[${m.title}](${m.url})`;
         });
-
         return void interaction.followUp({
             embeds: [
                 {
