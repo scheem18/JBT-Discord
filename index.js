@@ -1,16 +1,8 @@
-require('dotenv').config();
-const PORT = process.env['PORT'] || 3000
-require('express')()
-.get('/',(req,res) => {
-    return res.json({
-        message:'online'
-    })
-})
-.listen(PORT, () => {
-    console.log(`Server running on ${PORT}`)
-});
-
 const { Client, GatewayIntentBits, Partials, Collection, ActivityType } = require('discord.js');
+const { Player } = require("discord-player");
+const fs = require('fs');
+const axios = require('axios');
+
 const client = new Client({
     intents:[
         GatewayIntentBits.Guilds,
@@ -47,13 +39,8 @@ const client = new Client({
         repliedUser:false
     }
 });
-
-setInterval(() => {
-    require('./utils/sigscheck').sigscheck(client);
-},43200000);
-const { Player } = require("discord-player");
 client.player = new Player(client);
-const fs = require('fs');
+
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
 for (const file of eventFiles) {
 	const event = require(`./events/${file}`);
@@ -86,5 +73,15 @@ for (const file of autoCompleteFiles) {
     const autocomplete = require(`./interactions/autocomplete/${file}`);
     client.autoComplete[autocomplete.data.name] = autocomplete;
 }
+
+axios.get('https://dhinakg.github.io/check-pallas/minified-v3.json').then(({data}) => {
+    fs.writeFileSync('./json/delay.json', JSON.stringify(data), 'utf-8');
+}).catch(console.error);
+setInterval(() => {
+    require('./utils/sigscheck').sigscheck(client);
+    axios.get('https://dhinakg.github.io/check-pallas/minified-v3.json').then(({data}) => {
+        fs.writeFileSync('./json/delay.json', JSON.stringify(data), 'utf-8');
+    }).catch(console.error);
+},43200000);
 
 client.login(process.env['TOKEN']).catch(console.error);
