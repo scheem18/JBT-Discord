@@ -6,9 +6,8 @@ module.exports = {
             this.interaction = interaction;
         }
         async reply (embeds, options = {}) {
-            const deferred = options.deferred || false;
             let page = 0;
-            const reply = deferred ? await this.interaction.editReply({embeds:[embeds[0].setFooter({text:`${page+1}/${embeds.length}ページ目`})]}) : await this.interaction.reply({embeds:[embeds[0].setFooter({text:`${page+1}/${embeds.length}ページ目`})]});
+            const reply = await this.interaction.editReply({embeds:[embeds[0].setFooter({text:`${page+1}/${embeds.length}ページ目`})]});
             for (const emoji of emojiList) await reply.react(emoji);
             const filter = (reaction,user) => {
                 return user.id === this.interaction.user.id;
