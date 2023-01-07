@@ -82,6 +82,6 @@ setInterval(() => {
     axios.get('https://dhinakg.github.io/check-pallas/minified-v3.json').then(({data}) => {
         fs.writeFileSync('./json/delay.json', JSON.stringify(data), 'utf-8');
     }).catch(console.error);
-},43200000);
+},21600000);
 
 client.login(process.env['TOKEN']).catch(console.error);
