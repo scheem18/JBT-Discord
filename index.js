@@ -74,14 +74,6 @@ for (const file of autoCompleteFiles) {
     client.autoComplete[autocomplete.data.name] = autocomplete;
 }
 
-axios.get('https://dhinakg.github.io/check-pallas/minified-v3.json').then(({data}) => {
-    fs.writeFileSync('./json/delay.json', JSON.stringify(data), 'utf-8');
-}).catch(console.error);
-setInterval(() => {
-    require('./utils/sigscheck').sigscheck(client);
-    axios.get('https://dhinakg.github.io/check-pallas/minified-v3.json').then(({data}) => {
-        fs.writeFileSync('./json/delay.json', JSON.stringify(data), 'utf-8');
-    }).catch(console.error);
-},21600000);
+require('./utils/cron')(client);
 
 client.login(process.env['TOKEN']).catch(console.error);
