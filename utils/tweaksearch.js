@@ -9,7 +9,7 @@ module.exports = {
             const controller = new MessageEmbedControl(message);
             const results = []
             const { data } = await axios.get(`https://api.canister.me/v2/jailbreak/package/search?q=${query}&limit=250`);
-            if (!data.count <= 0) return await message.reply({content:`${query}に一致するパッケージが見つかりませんでした。`});
+            if (data.count <= 0) return await message.reply({content:`${query}に一致するパッケージが見つかりませんでした。`});
             data.data.forEach((pkg) => {
                 if (results.findIndex(result => (result.package === pkg.package)) === -1) {
                     results.push(pkg);
