@@ -10,6 +10,7 @@ module.exports = {
     ),
 
     run:async ({interaction, client}) => {
+        if (!interaction.guild) return await interaction.reply({content:'サーバー内で実行してください。'});
         await interaction.deferReply();
         try {
             const id = interaction.options.getUser('member')?.id ?? interaction.user.id;
