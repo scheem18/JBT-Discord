@@ -29,7 +29,7 @@ module.exports = {
             {name:jailbreak.info.notes ? '注釈' : '\u200b', value:jailbreak.info.notes ?? '\u200b',inline:true}
         )
         .setColor(jailbreak.info.color ?? null)
-        .setThumbnail(jailbreak.info.icon ? `https://appledb.dev${jailbreak.info.icon}` : null)
+        .setThumbnail(jailbreak.info.icon ? `https://ios.cfw.guide${jailbreak.info.icon}` : null)
         .setFooter({text:'Powered by https://appledb.dev'});
         await interaction.editReply({embeds:[embed]});
     }
